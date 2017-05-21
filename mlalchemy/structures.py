@@ -1,7 +1,7 @@
 # -*- coding: utf-8 -*-
 
-from __future__ import unicode_literals
-from past.builtins import basestring
+
+from past.builtins import str
 
 from sqlalchemy.sql.expression import and_, or_, not_
 from sqlalchemy.orm.attributes import QueryableAttribute
@@ -38,11 +38,11 @@ class MLQuery(object):
             offset: The number of entries to skip. Set to None if no offset is required.
             limit: The maximum number of entries to return. Set to None to specify no limit.
         """
-        if not isinstance(table, basestring):
+        if not isinstance(table, str):
             raise TypeError("The table name supplied to an MLQuery object must be a string")
         if query_fragment is not None and not isinstance(query_fragment, MLQueryFragment):
             raise TypeError("Primary query fragment for MLQuery must be of type MLQueryFragment")
-        if order_by is not None and not isinstance(order_by, basestring) and not isinstance(order_by, list):
+        if order_by is not None and not isinstance(order_by, str) and not isinstance(order_by, list):
             raise TypeError("Query ordering parameter must be a string or a list")
 
         self.unique_field_names = set()
@@ -103,7 +103,7 @@ class MLQuery(object):
         if self.order_by is not None:
             criteria = []
             for order_by in self.order_by:
-                field, direction = [i for i in order_by.items()][0]
+                field, direction = [i for i in list(order_by.items())][0]
                 criterion = getattr(table, field)
                 if not isinstance(criterion, QueryableAttribute):
                     raise InvalidFieldError("Invalid field for specified table: %s" % field)
@@ -232,7 +232,7 @@ class MLClause(object):
         if comp not in COMPARATORS:
             raise InvalidComparatorError("Invalid comparator: %s" % comp)
 
-        if not isinstance(field, basestring):
+        if not isinstance(field, str):
             raise TypeError("Clause field names must be strings")
 
         # ensure field name is in snake_case
